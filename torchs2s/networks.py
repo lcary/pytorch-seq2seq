@@ -27,7 +27,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from constants import DEVICE, MAX_LENGTH
+from torchs2s.constants import DEVICE, MAX_LENGTH
 
 
 class EncoderRNN(nn.Module):
