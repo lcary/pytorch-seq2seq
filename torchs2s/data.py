@@ -11,7 +11,7 @@ import unicodedata
 from io import open
 
 # start/end of string
-from constants import MAX_LENGTH
+from torchs2s.constants import MAX_LENGTH
 
 ENG_PREFIXES = (
     "i am ", "i m ",

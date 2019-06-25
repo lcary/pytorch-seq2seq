@@ -1,7 +1,7 @@
-from constants import DEVICE
-from data import prepare_data
-from networks import EncoderRNN, DecoderRNN, AttentionDecoderRNN
-from train import train_iters, evaluate_randomly
+from torchs2s.constants import DEVICE
+from torchs2s.data import prepare_data
+from torchs2s.networks import EncoderRNN, AttentionDecoderRNN
+from torchs2s.train import train_iters, evaluate_randomly
 
 hidden_size = 256
 input_lang, output_lang, pairs = prepare_data('eng', 'fra', True)

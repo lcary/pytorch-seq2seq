@@ -4,9 +4,9 @@ import time
 import torch
 from torch import optim, nn
 
-from constants import SOS_token, DEVICE, EOS_token, MAX_LENGTH
-from graph import show_plot
-from utils import time_since
+from torchs2s.constants import SOS_token, DEVICE, EOS_token, MAX_LENGTH
+from torchs2s.graph import show_plot
+from torchs2s.utils import time_since
 
 TEACHER_FORCING_RATIO = 0.5
 
