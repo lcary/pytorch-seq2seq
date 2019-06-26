@@ -25,7 +25,11 @@ TODO: save network state after training
 Parameters
 ----------
 
-TODO
+See `python main.py --help` for a list of parameters. Some below:
+
+Use `-i` to control the number of training iterations.
+
+Use `-H` to control the size of the hidden layer.
 
 Background
 ----------
