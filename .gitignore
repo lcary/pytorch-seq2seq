@@ -10,3 +10,4 @@ watchmem/
 *.log
 *.png
 .mypy_cache/
+*.state

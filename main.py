@@ -1,5 +1,6 @@
 import argparse
 
+import torch
 import torch.optim as optim
 
 from torchs2s.constants import DEVICE
@@ -12,15 +13,7 @@ from torchs2s.utils import log_setup
 log = log_setup()
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-H', '--hidden-size', type=int, default=256)
-    parser.add_argument('-l', '--learning-rate', type=float, default=0.01)
-    parser.add_argument('-i', '--iterations', type=int, default=75000)
-    parser.add_argument('-d', '--dropout-p', type=int, default=0.1,
-                        help='Dropout p-value for decoder')
-    args = parser.parse_args()
-
+def main(args: argparse.Namespace) -> None:
     hidden_size = args.hidden_size
     learning_rate = args.learning_rate
     iterations = args.iterations
@@ -40,8 +33,14 @@ def main() -> None:
 
     context = NetworkContext(encoder, decoder, encoder_optimizer, decoder_optimizer, input_lang, output_lang)
 
+    if args.load_state:
+        context.load_state(args.load_state_file)
+
     log.info('training for {} iterations'.format(iterations))
     train_iters(context, iterations, pairs)
+
+    if args.save_state:
+        context.save_state(args.save_state_file)
 
     log.info('random evaluation for debugging')
     evaluate_randomly(context, pairs)
@@ -54,5 +53,23 @@ def main() -> None:
     log.info('done.')
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-H', '--hidden-size', type=int, default=256)
+    parser.add_argument('-l', '--learning-rate', type=float, default=0.01)
+    parser.add_argument('-i', '--iterations', type=int, default=75000)
+    parser.add_argument('-d', '--dropout-p', type=int, default=0.1,
+                        help='Dropout p-value for decoder')
+    parser.add_argument('-S', '--save-state', action='store_true', default=False,
+                        help='Save the network state after training')
+    parser.add_argument('--save-state-file', default='network.state')
+    parser.add_argument('-L', '--load-state', action='store_true', default=False,
+                        help='Save the network state after training')
+    parser.add_argument('--load-state-file', default='network.state')
+    args = parser.parse_args()
+    return args
+
+
 if __name__ == '__main__':
-    main()
+    args = parse_args()
+    main(args)

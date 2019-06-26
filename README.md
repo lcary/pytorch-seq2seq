@@ -20,7 +20,6 @@ This will train a sequence-to-sequence neural network, and output several plots
 as well as example sentence matrices for the trained network.
 
 TODO: output into `out/`
-TODO: save network state after training
 
 Parameters
 ----------

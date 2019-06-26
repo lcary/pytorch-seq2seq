@@ -6,7 +6,8 @@ Module containing seq2seq networks.
 
 from __future__ import unicode_literals, print_function, division
 
-from typing import Tuple, List, Any
+import logging
+from typing import Tuple, Any
 
 import torch
 import torch.nn as nn
@@ -16,6 +17,8 @@ from torch.optim.optimizer import Optimizer
 
 from torchs2s.constants import DEVICE, MAX_LENGTH
 from torchs2s.language import Language
+
+log = logging.getLogger(__name__)
 
 
 class EncoderRNN(nn.Module):
@@ -173,3 +176,20 @@ class NetworkContext(object):
         self.decoder_optimizer = decoder_optimizer
         self.input_lang = input_lang
         self.output_lang = output_lang
+
+    def load_state(self, state_file):
+        log.info('loading networks from previous state file: {}'.format(state_file))
+        checkpoint = torch.load(state_file)
+        self.encoder.load_state_dict(checkpoint['encoder'])
+        self.decoder.load_state_dict(checkpoint['decoder'])
+        self.encoder_optimizer.load_state_dict(checkpoint['encoder_optimizer'])
+        self.decoder_optimizer.load_state_dict(checkpoint['decoder_optimizer'])
+
+    def save_state(self, state_file):
+        log.info('saving networks to state file: {}'.format(state_file))
+        torch.save({
+            'encoder': self.encoder.state_dict(),
+            'decoder': self.decoder.state_dict(),
+            'encoder_optimizer': self.encoder_optimizer.state_dict(),
+            'decoder_optimizer': self.decoder_optimizer.state_dict(),
+        }, state_file)
