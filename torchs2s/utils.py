@@ -3,7 +3,7 @@ import math
 import time
 
 
-def log_setup():
+def log_setup() -> logging.Logger:
     log = logging.getLogger('torchs2s')
     log.setLevel(logging.DEBUG)
 
@@ -19,20 +19,19 @@ def log_setup():
 
     log.addHandler(c_handler)
     log.addHandler(f_handler)
+
     return log
 
 
-def as_minutes(s):
-    m = math.floor(s / 60)
-    s -= m * 60
-    return '%dm %ds' % (m, s)
+def as_minutes(seconds: float) -> str:
+    minutes = math.floor(seconds / 60)
+    seconds -= minutes * 60
+    return '%dm %ds' % (minutes, seconds)
 
 
-def time_since(since, percent):
+def time_since(since: float, percent: float) -> str:
     now = time.time()
-    s = now - since
-    es = s / (percent)
-    rs = es - s
-    return '%s (- %s)' % (as_minutes(s), as_minutes(rs))
-
-
+    elapsed_seconds = now - since
+    total_seconds = elapsed_seconds / percent
+    remaining_seconds = total_seconds - elapsed_seconds
+    return '%s (- %s)' % (as_minutes(elapsed_seconds), as_minutes(remaining_seconds))

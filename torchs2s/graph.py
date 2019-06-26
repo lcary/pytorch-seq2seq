@@ -1,18 +1,27 @@
+from typing import List
+
 import matplotlib.pyplot as plt
+
 plt.switch_backend('agg')
 import matplotlib.ticker as ticker
+from torch import Tensor
 
 
-def save_plot(points):
+def save_plot(points: List[float]) -> None:
     fig, ax = plt.subplots()
     # this locator puts ticks at regular intervals
     loc = ticker.MultipleLocator(base=0.2)
     ax.yaxis.set_major_locator(loc)
     plt.plot(points)
-    fig.savefig('plot.png')
+    filename = 'plot.png'
+    fig.savefig(filename)
+    print('Saved {}'.format(filename))
 
 
-def save_attention_matrix(input_sentence, output_words, attentions, filename):
+def save_attention_matrix(input_sentence: str,
+                          output_words: List[str],
+                          attentions: Tensor,
+                          filename: str) -> None:
     # Set up figure with colorbar
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -29,3 +38,4 @@ def save_attention_matrix(input_sentence, output_words, attentions, filename):
     ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
 
     fig.savefig(filename)
+    print('Saved {}'.format(filename))

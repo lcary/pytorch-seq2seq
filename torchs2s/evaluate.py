@@ -1,13 +1,18 @@
 import random
+from typing import List, Tuple
 
 import torch
+from torch import Tensor
 
-from torchs2s.constants import MAX_LENGTH, DEVICE, SOS_token, EOS_token
+from torchs2s.constants import MAX_LENGTH, DEVICE, SOS_token, EOS_token, Pairs
 from torchs2s.graph import save_attention_matrix
 from torchs2s.language import tensor_from_sentence
+from torchs2s.networks import NetworkContext
 
 
-def evaluate(context, sentence, max_length=MAX_LENGTH):
+def evaluate(context: NetworkContext,
+             sentence: str,
+             max_length: int = MAX_LENGTH) -> Tuple[List[str], Tensor]:
     encoder = context.encoder
     decoder = context.decoder
     input_lang = context.input_lang
@@ -48,7 +53,7 @@ def evaluate(context, sentence, max_length=MAX_LENGTH):
         return decoded_words, decoder_attentions[:di + 1]
 
 
-def evaluate_randomly(context, pairs, n=10):
+def evaluate_randomly(context: NetworkContext, pairs: Pairs, n: int = 10) -> None:
     for i in range(n):
         pair = random.choice(pairs)
         print('>', pair[0])
@@ -59,7 +64,9 @@ def evaluate_randomly(context, pairs, n=10):
         print('')
 
 
-def evaluate_and_save_attention(context, input_sentence, filename):
+def evaluate_and_save_attention(context: NetworkContext,
+                                input_sentence: str,
+                                filename: str) -> None:
     output_words, attentions = evaluate(context, input_sentence)
     print('input =', input_sentence)
     print('output =', ' '.join(output_words))

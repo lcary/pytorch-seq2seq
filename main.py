@@ -10,7 +10,7 @@ from torchs2s.utils import log_setup
 log = log_setup()
 
 
-def main():
+def main() -> None:
     hidden_size = 256
     learning_rate = 0.01
 

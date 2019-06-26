@@ -7,9 +7,10 @@ import logging
 import os
 import random
 from io import open
-
 # start/end of string
-from torchs2s.constants import MAX_LENGTH
+from typing import Tuple
+
+from torchs2s.constants import MAX_LENGTH, Pairs, Pair
 from torchs2s.language import Language, normalize_string
 
 ENG_PREFIXES = (
@@ -24,7 +25,9 @@ ENG_PREFIXES = (
 log = logging.getLogger(__name__)
 
 
-def read_languages(lang1, lang2, reverse=False):
+def read_languages(lang1: str,
+                   lang2: str,
+                   reverse: bool = False) -> Tuple[Language, Language, Pairs]:
     log.info('Reading lines...')
 
     with open(os.path.join('data', '{}-{}.txt'.format(lang1, lang2)), encoding='utf-8') as f:
@@ -43,7 +46,7 @@ def read_languages(lang1, lang2, reverse=False):
     return input_lang, output_lang, pairs
 
 
-def filter_pair(p):
+def filter_pair(p: Pair) -> bool:
     """
     Filter method to trim data to short and simple sentences for training.
     """
@@ -53,11 +56,13 @@ def filter_pair(p):
             p[1].startswith(ENG_PREFIXES))
 
 
-def filter_pairs(pairs):
+def filter_pairs(pairs: Pairs) -> Pairs:
     return [pair for pair in pairs if filter_pair(pair)]
 
 
-def prepare_data(lang1, lang2, reverse=False):
+def prepare_data(lang1: str,
+                 lang2: str,
+                 reverse: bool = False) -> Tuple[Language, Language, Pairs]:
     """
     1. Read text file and split into lines, split lines into pairs
     2. Normalize text, filter by length and content

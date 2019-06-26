@@ -3,12 +3,14 @@ import random
 import time
 
 import torch
+from torch import Tensor
 from torch import nn
 
-from torchs2s.constants import SOS_token, DEVICE, EOS_token, MAX_LENGTH
+from torchs2s.constants import SOS_token, DEVICE, EOS_token, MAX_LENGTH, Pairs
 from torchs2s.graph import save_plot
-from torchs2s.utils import time_since
 from torchs2s.language import tensors_from_pair
+from torchs2s.networks import NetworkContext
+from torchs2s.utils import time_since
 
 TEACHER_FORCING_RATIO = 0.5
 
@@ -20,7 +22,15 @@ log = logging.getLogger(__name__)
 # current error: RuntimeError: input.size(-1) must be equal to input_size. Expected 256, got 2803
 # when using: decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden)
 #
-def train_attention(input_tensor, target_tensor, context, criterion, max_length=MAX_LENGTH):
+def train_attention(
+        input_tensor: Tensor,
+        target_tensor: Tensor,
+        context: NetworkContext,
+        criterion: nn.Module,
+        max_length: int = MAX_LENGTH) -> float:
+    """
+    Train the network for a single iteration, returning the loss.
+    """
     encoder = context.encoder
     decoder = context.decoder
     encoder_optimizer = context.encoder_optimizer
@@ -69,15 +79,23 @@ def train_attention(input_tensor, target_tensor, context, criterion, max_length=
             if decoder_input.item() == EOS_token:
                 break
 
-    loss.backward()
+    loss.backward()  # type: ignore
 
     encoder_optimizer.step()
     decoder_optimizer.step()
 
-    return loss.item() / target_length
+    return loss.item() / target_length  # type: ignore
 
 
-def train_iters(context, n_iters, pairs, print_every=1000, plot_every=100):
+def train_iters(
+        context: NetworkContext,
+        n_iters: int,
+        pairs: Pairs,
+        print_every: int = 1000,
+        plot_every: int = 100) -> None:
+    """
+    Train the network for a given number of iterations
+    """
     start = time.time()
     plot_losses = []
     print_loss_total = 0  # Reset every print_every
