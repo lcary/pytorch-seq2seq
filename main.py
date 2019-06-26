@@ -3,42 +3,40 @@ import logging
 from torchs2s.constants import DEVICE
 from torchs2s.data import prepare_data
 from torchs2s.networks import EncoderRNN, AttentionDecoderRNN
-from torchs2s.train import train_iters, evaluate_randomly
+from torchs2s.train import train_iters
+from torchs2s.evaluate import evaluate_randomly, evaluate_and_save_attention
+from torchs2s.utils import log_setup
 
-log = logging.getLogger('torchs2s')
-log.setLevel(logging.DEBUG)
+log = log_setup()
 
-# Create handlers
-c_handler = logging.StreamHandler()
-f_handler = logging.FileHandler('torchs2s.log')
-c_handler.setLevel(logging.INFO)
-f_handler.setLevel(logging.DEBUG)
 
-# Create formatters and add it to handlers
-c_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-c_handler.setFormatter(c_format)
-f_handler.setFormatter(f_format)
+def main():
+    hidden_size = 256
+    log.info('preparing data...')
+    input_lang, output_lang, pairs = prepare_data('eng', 'fra', True)
 
-# Add handlers to the log
-log.addHandler(c_handler)
-log.addHandler(f_handler)
+    log.info('creating encoder RNN')
+    encoder1 = EncoderRNN(input_lang.n_words, hidden_size).to(DEVICE)
+    # attn_decoder1 = DecoderRNN(hidden_size, output_lang.n_words).to(DEVICE)
 
-hidden_size = 256
-log.info('preparing data...')
-input_lang, output_lang, pairs = prepare_data('eng', 'fra', True)
+    log.info('creating decoder RNN')
+    attn_decoder1 = AttentionDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1).to(DEVICE)
 
-log.info('creating encoder RNN')
-encoder1 = EncoderRNN(input_lang.n_words, hidden_size).to(DEVICE)
-# attn_decoder1 = DecoderRNN(hidden_size, output_lang.n_words).to(DEVICE)
+    # n_iters = 75000
+    n_iters = 100
+    log.info('training for {} iterations'.format(n_iters))
+    train_iters(encoder1, attn_decoder1, n_iters, input_lang, output_lang, pairs)
 
-log.info('creating decoder RNN')
-attn_decoder1 = AttentionDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1).to(DEVICE)
+    log.info('random evaluation for debugging')
+    evaluate_randomly(encoder1, attn_decoder1, input_lang, output_lang, pairs)
 
-log.info('training for 75000 iterations')
-train_iters(encoder1, attn_decoder1, 75000, input_lang, output_lang, pairs)
+    evaluate_and_save_attention(encoder1, attn_decoder1, input_lang, output_lang, "elle a cinq ans de moins que moi .", 'sentence1.png')
+    evaluate_and_save_attention(encoder1, attn_decoder1, input_lang, output_lang, "elle est trop petit .", 'sentence2.png')
+    evaluate_and_save_attention(encoder1, attn_decoder1, input_lang, output_lang, "je ne crains pas de mourir .", 'sentence3.png')
+    evaluate_and_save_attention(encoder1, attn_decoder1, input_lang, output_lang, "c est un jeune directeur plein de talent .", 'sentence4.png')
 
-log.info('random evaluation for debugging')
-evaluate_randomly(encoder1, attn_decoder1, input_lang, output_lang, pairs)
+    log.info('done.')
 
-log.info('done.')
+
+if __name__ == '__main__':
+    main()
