@@ -3,7 +3,7 @@ Code from https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutoria
 
 Module for data preparation code.
 """
-
+import logging
 import os
 import random
 import re
@@ -21,6 +21,8 @@ ENG_PREFIXES = (
     "we are", "we re ",
     "they are", "they re "
 )
+
+log = logging.getLogger(__name__)
 
 
 class Language(object):
@@ -61,7 +63,7 @@ def normalize_string(s):
 
 
 def read_languages(lang1, lang2, reverse=False):
-    print('Reading lines...')
+    log.info('Reading lines...')
 
     with open(os.path.join('data', '{}-{}.txt'.format(lang1, lang2)), encoding='utf-8') as f:
         lines = f.read().strip().split('\n')
@@ -100,19 +102,19 @@ def prepare_data(lang1, lang2, reverse=False):
     3. Make word lists from sentences in pairs
     """
     input_lang, output_lang, pairs = read_languages(lang1, lang2, reverse)
-    print("Read %s sentence pairs" % len(pairs))
+    log.info("Read %s sentence pairs" % len(pairs))
     pairs = filter_pairs(pairs)
-    print("Trimmed to %s sentence pairs" % len(pairs))
-    print("Counting words...")
+    log.info("Trimmed to %s sentence pairs" % len(pairs))
+    log.info("Counting words...")
     for pair in pairs:
         input_lang.add_sentence(pair[0])
         output_lang.add_sentence(pair[1])
-    print("Counted words:")
-    print(input_lang.name, input_lang.n_words)
-    print(output_lang.name, output_lang.n_words)
+    log.info("Counted words:")
+    log.info('{}, {}'.format(input_lang.name, input_lang.n_words))
+    log.info('{}, {}'.format(output_lang.name, output_lang.n_words))
     return input_lang, output_lang, pairs
 
 
 if __name__ == '__main__':
     input_lang, output_lang, pairs = prepare_data('eng', 'fra', True)
-    print(random.choice(pairs))
+    log.info(random.choice(pairs))

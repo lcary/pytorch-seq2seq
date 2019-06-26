@@ -1,3 +1,4 @@
+import logging
 import random
 import time
 
@@ -9,6 +10,8 @@ from torchs2s.graph import show_plot
 from torchs2s.utils import time_since
 
 TEACHER_FORCING_RATIO = 0.5
+
+log = logging.getLogger(__name__)
 
 
 def indexes_from_sentence(lang, sentence):
@@ -151,6 +154,7 @@ def train_iters(encoder, decoder, n_iters, input_lang, output_lang, pairs, print
                       for _ in range(n_iters)]
     criterion = nn.NLLLoss()
 
+    log.info('initializing training...')
     for iter in range(1, n_iters + 1):
         training_pair = training_pairs[iter - 1]
         input_tensor = training_pair[0]
@@ -162,11 +166,11 @@ def train_iters(encoder, decoder, n_iters, input_lang, output_lang, pairs, print
         print_loss_total += loss
         plot_loss_total += loss
 
-        if iter % print_every == 0:
+        if iter in [0, 1] or iter % print_every == 0:
             print_loss_avg = print_loss_total / print_every
             print_loss_total = 0
-            print('%s (%d %d%%) %.4f' % (time_since(start, iter / n_iters),
-                                         iter, iter / n_iters * 100, print_loss_avg))
+            log.info('%s (%d %d%%) %.4f' % (time_since(start, iter / n_iters),
+                                            iter, iter / n_iters * 100, print_loss_avg))
 
         if iter % plot_every == 0:
             plot_loss_avg = plot_loss_total / plot_every
