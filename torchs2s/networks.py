@@ -152,3 +152,19 @@ class AttentionDecoderRNN(nn.Module):
 
     def init_hidden(self):
         return torch.zeros(1, 1, self.hidden_size, device=DEVICE)
+
+
+class NetworkContext(object):
+    """
+    Context object for passing references to the different components of
+    the network architecture. Mainly used to avoid long method signatures.
+    """
+
+    def __init__(self, encoder, decoder, encoder_optimizer,
+                 decoder_optimizer, input_lang, output_lang):
+        self.encoder = encoder
+        self.decoder = decoder
+        self.encoder_optimizer = encoder_optimizer
+        self.decoder_optimizer = decoder_optimizer
+        self.input_lang = input_lang
+        self.output_lang = output_lang

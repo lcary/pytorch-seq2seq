@@ -7,7 +7,12 @@ from torchs2s.graph import save_attention_matrix
 from torchs2s.utils import tensor_from_sentence
 
 
-def evaluate(encoder, decoder, input_lang, output_lang, sentence, max_length=MAX_LENGTH):
+def evaluate(context, sentence, max_length=MAX_LENGTH):
+    encoder = context.encoder
+    decoder = context.decoder
+    input_lang = context.input_lang
+    output_lang = context.output_lang
+
     with torch.no_grad():
         input_tensor = tensor_from_sentence(input_lang, sentence)
         input_length = input_tensor.size()[0]
@@ -43,20 +48,19 @@ def evaluate(encoder, decoder, input_lang, output_lang, sentence, max_length=MAX
         return decoded_words, decoder_attentions[:di + 1]
 
 
-def evaluate_randomly(encoder, decoder, input_lang, output_lang, pairs, n=10):
+def evaluate_randomly(context, pairs, n=10):
     for i in range(n):
         pair = random.choice(pairs)
         print('>', pair[0])
         print('=', pair[1])
-        output_words, attentions = evaluate(encoder, decoder, input_lang, output_lang, pair[0])
+        output_words, attentions = evaluate(context, pair[0])
         output_sentence = ' '.join(output_words)
         print('<', output_sentence)
         print('')
 
 
-def evaluate_and_save_attention(encoder, decoder, input_lang, output_lang, input_sentence, filename):
-    output_words, attentions = evaluate(
-        encoder, decoder, input_lang, output_lang, input_sentence)
+def evaluate_and_save_attention(context, input_sentence, filename):
+    output_words, attentions = evaluate(context, input_sentence)
     print('input =', input_sentence)
     print('output =', ' '.join(output_words))
     save_attention_matrix(input_sentence, output_words, attentions, filename)
