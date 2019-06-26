@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --time=02:00:00
+#SBATCH --time=05:00:00
 #SBATCH --array=1-1
-#SBATCH --mem=25GB
-#SBATCH --cpus-per-task=8
+#SBATCH --mem=20GB
+#SBATCH --cpus-per-task=16
 
 repo_root=/om2/user/lcary/pytorch-seq2seq
 

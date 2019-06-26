@@ -5,3 +5,5 @@ __pycache__/
 *.simg
 *~
 *.out
+*.pyc
+watchmem/
