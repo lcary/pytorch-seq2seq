@@ -1,6 +1,5 @@
 import argparse
 
-import torch
 import torch.optim as optim
 
 from torchs2s.constants import DEVICE
@@ -36,19 +35,23 @@ def main(args: argparse.Namespace) -> None:
     if args.load_state:
         context.load_state(args.load_state_file)
 
-    log.info('training for {} iterations'.format(iterations))
-    train_iters(context, iterations, pairs)
+    if args.skip_training:
+        log.info('skipping training as per commandline flag')
+    else:
+        log.info('training for {} iterations'.format(iterations))
+        train_iters(context, iterations, pairs)
 
     if args.save_state:
         context.save_state(args.save_state_file)
 
-    log.info('random evaluation for debugging')
-    evaluate_randomly(context, pairs)
+    if args.debug_evaluate:
+        log.info('random evaluation for debugging')
+        evaluate_randomly(context, pairs)
 
-    evaluate_and_save_attention(context, "elle a cinq ans de moins que moi .", 'sentence1.png')
-    evaluate_and_save_attention(context, "elle est trop petit .", 'sentence2.png')
-    evaluate_and_save_attention(context, "je ne crains pas de mourir .", 'sentence3.png')
-    evaluate_and_save_attention(context, "c est un jeune directeur plein de talent .", 'sentence4.png')
+        evaluate_and_save_attention(context, "elle a cinq ans de moins que moi .", 'sentence1.png')
+        evaluate_and_save_attention(context, "elle est trop petit .", 'sentence2.png')
+        evaluate_and_save_attention(context, "je ne crains pas de mourir .", 'sentence3.png')
+        evaluate_and_save_attention(context, "c est un jeune directeur plein de talent .", 'sentence4.png')
 
     log.info('done.')
 
@@ -66,6 +69,8 @@ def parse_args():
     parser.add_argument('-L', '--load-state', action='store_true', default=False,
                         help='Save the network state after training')
     parser.add_argument('--load-state-file', default='network.state')
+    parser.add_argument('--skip-training', action='store_true', default=False)
+    parser.add_argument('--debug-evaluate', action='store_true', default=False)
     args = parser.parse_args()
     return args
 
