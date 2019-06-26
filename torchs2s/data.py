@@ -6,12 +6,11 @@ Module for data preparation code.
 import logging
 import os
 import random
-import re
-import unicodedata
 from io import open
 
 # start/end of string
 from torchs2s.constants import MAX_LENGTH
+from torchs2s.language import Language, normalize_string
 
 ENG_PREFIXES = (
     "i am ", "i m ",
@@ -23,43 +22,6 @@ ENG_PREFIXES = (
 )
 
 log = logging.getLogger(__name__)
-
-
-class Language(object):
-
-    def __init__(self, name):
-        self.name = name
-        self.word2index = {}
-        self.word2count = {}
-        self.index2word = {0: "SOS", 1: "EOS"}
-        self.n_words = 2
-
-    def add_sentence(self, sentence):
-        for word in sentence.split(' '):
-            self.add_word(word)
-
-    def add_word(self, word):
-        if word not in self.word2index:
-            self.word2index[word] = self.n_words
-            self.word2count[word] = 1
-            self.index2word[self.n_words] = word
-            self.n_words += 1
-        else:
-            self.word2count[word] += 1
-
-
-def unicode_to_ascii(s):
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', s)
-        if unicodedata.category(c) != 'Mn'
-    )
-
-
-def normalize_string(s):
-    s = unicode_to_ascii(s.lower().strip())
-    s = re.sub(r"([.!?])", r" \1", s)
-    s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)
-    return s
 
 
 def read_languages(lang1, lang2, reverse=False):

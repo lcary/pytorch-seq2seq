@@ -1,12 +1,10 @@
-import logging
-
 import torch.optim as optim
 
 from torchs2s.constants import DEVICE
 from torchs2s.data import prepare_data
+from torchs2s.evaluate import evaluate_randomly, evaluate_and_save_attention
 from torchs2s.networks import EncoderRNN, AttentionDecoderRNN, NetworkContext
 from torchs2s.train import train_iters
-from torchs2s.evaluate import evaluate_randomly, evaluate_and_save_attention
 from torchs2s.utils import log_setup
 
 log = log_setup()

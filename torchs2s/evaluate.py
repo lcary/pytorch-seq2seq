@@ -4,7 +4,7 @@ import torch
 
 from torchs2s.constants import MAX_LENGTH, DEVICE, SOS_token, EOS_token
 from torchs2s.graph import save_attention_matrix
-from torchs2s.utils import tensor_from_sentence
+from torchs2s.language import tensor_from_sentence
 
 
 def evaluate(context, sentence, max_length=MAX_LENGTH):
