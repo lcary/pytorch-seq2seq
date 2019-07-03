@@ -19,16 +19,17 @@ python main.py
 This will train a sequence-to-sequence neural network, and output several plots
 as well as example sentence matrices for the trained network.
 
-TODO: output into `out/`
+See `python main.py --help` for a full list of commandline arguments.
 
-Parameters
+Unit tests
 ----------
 
-See `python main.py --help` for a list of parameters. Some below:
+Make sure to activate the virtual environment before running.
 
-Use `-i` to control the number of training iterations.
-
-Use `-H` to control the size of the hidden layer.
+From repo root:
+```bash
+./runtests
+```
 
 Background
 ----------
