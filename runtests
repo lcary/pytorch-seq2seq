@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+echo "$(pwd)"
+source venv/bin/activate || echo "activated"
+python -m unittest discover tests

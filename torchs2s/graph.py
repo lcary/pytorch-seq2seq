@@ -7,13 +7,12 @@ import matplotlib.ticker as ticker
 from torch import Tensor
 
 
-def save_plot(points: List[float]) -> None:
+def save_plot(points: List[float], filename: str = 'plot.png') -> None:
     fig, ax = plt.subplots()
     # this locator puts ticks at regular intervals
     loc = ticker.MultipleLocator(base=0.2)
     ax.yaxis.set_major_locator(loc)
     plt.plot(points)
-    filename = 'plot.png'
     fig.savefig(filename)
     print('Saved {}'.format(filename))
 
